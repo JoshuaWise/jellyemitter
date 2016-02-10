@@ -5,7 +5,7 @@
   "main": "jellyemitter.js",
   "scripts": {
     "test": "$(npm bin)/mocha",
-    "test-browsers": "$(npm bin)/zuul -- test/*.js"
+    "zuul": "zuul -- test/*.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,6 @@
   "homepage": "https://github.com/JoshuaWise/jellyemitter#readme",
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5",
-    "zuul": "^3.9.0"
+    "mocha": "^2.4.5"
   }
 }
