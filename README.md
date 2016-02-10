@@ -12,12 +12,12 @@ emitter.emit('foo') // => "foo!"
 ## How is this different from the Node.js EventEmitter?
 
 - All events are treated equally ("error", "newListener", and "removeListener" are not special)
-- No intrusive inspection  with `listenerCount()` or `listeners()`
-- No `maxListeners` (annoying and useless)
+- No intrusive inspection  with listenerCount() or listeners()
+- No max listeners (annoying and useless)
 - Only 744 bytes (minified and gzipped)
 - `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like an actual event (unlike literally every other event emitter in existence)
 
-Other than that, it's basically the same. You get `emit()`, `on()`, `once()`, `addListener()`, and `removeListener()`.
+Other than that, it's basically the same. You get `emit`, `on`, `once`, `addListener`, and `removeListener`.
 
 ## Other differences
 
@@ -48,7 +48,7 @@ emitter.on('foo', wrapper);
 emitter.removeListener('foo', original)
 ```
 
-If you give an event listener the `originalListener` property, that listener can **only** be removed by referencing the value of `originalListener`, and **not** by referencing the function that was actually registered.
+If you give an event listener the `.originalListener` property, that listener can **only** be removed by referencing the value of `.originalListener`, and **not** by referencing the function that was actually registered.
 
 This is useful for API developers who wish to give custom functionality to some (or all) events. It allows the API consumer to still have the power to remove their listeners, even though they were wrapped by the API developer.
 
