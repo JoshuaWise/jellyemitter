@@ -3,7 +3,7 @@ A generic event emitter that doesn't totally suck.
 
 ## How is this different from the Node.js EventEmitter?
 
-- `error`, `newListener`, and `removeListener` are not special events
+- All events are treated equally (`error`, `newListener`, and `removeListener` are not special)
 - No intrusive inspection  with `listenerCount()` or `listeners()`
 - No `maxListeners` (annoying and useless)
 - Only 744 bytes (minified and gzipped)
