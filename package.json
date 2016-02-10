@@ -1,0 +1,26 @@
+{
+  "name": "jellyemitter",
+  "version": "0.1.0",
+  "description": "An event emitter that's completely generic, and doesn't suck.",
+  "main": "jellyemitter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaWise/jellyemitter.git"
+  },
+  "keywords": [
+    "event",
+    "emitter",
+    "generic",
+    "safe",
+    "modern"
+  ],
+  "author": "Joshua Wise <josh@joshuawise.ninja> (www.joshuawise.ninja)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoshuaWise/jellyemitter/issues"
+  },
+  "homepage": "https://github.com/JoshuaWise/jellyemitter#readme"
+}
