@@ -4,7 +4,8 @@
   "description": "A generic event emitter that doesn't totally suck.",
   "main": "jellyemitter.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "$(npm bin)/mocha",
+    "test-browsers": "$(npm bin)/zuul -- test/*.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/JoshuaWise/jellyemitter/issues"
   },
-  "homepage": "https://github.com/JoshuaWise/jellyemitter#readme"
+  "homepage": "https://github.com/JoshuaWise/jellyemitter#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "zuul": "^3.9.0"
+  }
 }
