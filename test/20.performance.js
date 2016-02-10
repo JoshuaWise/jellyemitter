@@ -93,12 +93,10 @@ describe('performance', function () {
 		function jelly() {
 			j.emit('foo')
 			j.emit('foo', 1)
-			j.emit('foo', 1, 'str', null, {})
 		}
 		function node() {
 			n.emit('foo')
 			n.emit('foo', 1)
-			n.emit('foo', 1, 'str', null, {})
 		}
 		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
@@ -115,12 +113,10 @@ describe('performance', function () {
 		function jelly() {
 			j.emit('foo')
 			j.emit('foo', 1)
-			j.emit('foo', 1, 'str', null, {})
 		}
 		function node() {
 			n.emit('foo')
 			n.emit('foo', 1)
-			n.emit('foo', 1, 'str', null, {})
 		}
 		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
