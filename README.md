@@ -17,7 +17,7 @@ emitter.emit('foo') // => "foo!"
 - Only 744 bytes (minified and gzipped)
 - `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like a normal event (unlike literally every other event emitter in existence)
 
-Other than that, it's essentially the same. You get `emit()`, `on()`, `once()`, `addListener()`, and `removeListener()`.
+Other than that, it's basically the same. You get `emit()`, `on()`, `once()`, `addListener()`, and `removeListener()`.
 
 ## Other differences
 
