@@ -1,7 +1,7 @@
 {
   "name": "jellyemitter",
   "version": "0.2.0",
-  "description": "An event emitter that's completely generic, and doesn't suck.",
+  "description": "A generic event emitter that doesn't totally suck.",
   "main": "jellyemitter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
