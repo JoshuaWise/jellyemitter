@@ -3,15 +3,21 @@ A generic event emitter that doesn't totally suck.
 
 ```
 var JellyEmitter = require('jellyemitter')
-var emitter = new JellyEmitter()
+var emitter = new JellyEmitter
+
+emitter.on('foo', function () {console.log('foo!')})
+emitter.emit('foo') // => "foo!"
 ```
 
 ## How is this different from the Node.js EventEmitter?
 
-- All events are treated equally (`error`, `newListener`, and `removeListener` are not special)
+- All events are treated equally ("error", "newListener", and "removeListener" are not special)
 - No intrusive inspection  with `listenerCount()` or `listeners()`
 - No `maxListeners` (annoying and useless)
 - Only 744 bytes (minified and gzipped)
+- `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like a normal event (unlike literally every other event emitter in existence)
+
+Other than that, it's essentially the same. You get `emit()`, `on()`, `once()`, `addListener()`, and `removeListener()`.
 
 ## Other differences
 
