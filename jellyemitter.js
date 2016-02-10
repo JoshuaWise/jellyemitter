@@ -6,11 +6,11 @@ JellyEmitter.prototype = {
 		var list = this._events && this._events[eventName]
 		if (list) {
 			var argLen = arguments.length
-			argLen <= 1 ? args0(this, list) :
-			argLen == 2 ? args1(this, list, a) :
-			argLen == 3 ? args2(this, list, a, b) :
-			argLen == 4 ? args3(this, list, a, b, c) :
-			              argsX(this, list, copy(arguments, 1))
+			argLen <= 1 ? arg0(this, list) :
+			argLen == 2 ? arg1(this, list, a) :
+			argLen == 3 ? arg2(this, list, a, b) :
+			argLen == 4 ? arg3(this, list, a, b, c) :
+			              argX(this, list, copy(arguments, 1))
 			return true
 		}
 		return false
@@ -36,7 +36,7 @@ JellyEmitter.prototype = {
 		}
 		var fired = false
 		function w() {
-			this.removeListener(eventName, w)
+			this.removeListener(eventName, w.originalListener)
 			if (!fired) {
 				fired = true
 				listener.apply(this, arguments)
@@ -82,7 +82,7 @@ JellyEmitter.prototype = {
 JellyEmitter.prototype.addListener = JellyEmitter.prototype.on
 module.exports = JellyEmitter
 
-function args0(self, handler) {
+function arg0(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self)
 	} else {
@@ -93,7 +93,7 @@ function args0(self, handler) {
 	}
 }
 
-function args1(self, handler, a) {
+function arg1(self, handler, a) {
 	if (typeof handler === 'function') {
 		handler.call(self, a)
 	} else {
@@ -104,7 +104,7 @@ function args1(self, handler, a) {
 	}
 }
 
-function args2(self, handler, a, b) {
+function arg2(self, handler, a, b) {
 	if (typeof handler === 'function') {
 		handler.call(self, a, b)
 	} else {
@@ -115,7 +115,7 @@ function args2(self, handler, a, b) {
 	}
 }
 
-function args3(self, handler, a, b, c) {
+function arg3(self, handler, a, b, c) {
 	if (typeof handler === 'function') {
 		handler.call(self, a, b, c)
 	} else {
@@ -126,7 +126,7 @@ function args3(self, handler, a, b, c) {
 	}
 }
 
-function argsX(self, handler, args) {
+function argX(self, handler, args) {
 	if (typeof handler === 'function') {
 		handler.apply(self, args)
 	} else {
