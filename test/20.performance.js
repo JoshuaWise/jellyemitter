@@ -1,6 +1,6 @@
 var expect = require('chai').expect
 var JellyEmitter = require('../.')
-var EventEmitter = require('events')
+var EventEmitter = require('events').EventEmitter
 
 describe('performance', function () {
 	if (typeof process === 'undefined' || process.browser) {
@@ -31,7 +31,7 @@ describe('performance', function () {
 		}
 	}
 	
-	it('should be created fast enough (within 10%)', function () {
+	it('should be created fast enough (within 50%)', function () {
 		this.timeout(3000)
 		this.slow(25000)
 		function jelly() {
@@ -40,9 +40,9 @@ describe('performance', function () {
 		function node() {
 			var foo = new EventEmitter
 		}
-		fastEnough(ns(jelly), ns(node), 0.1)
+		fastEnough(ns(jelly), ns(node), 0.5)
 	})
-	it('should add listeners fast enough (within 25%)', function () {
+	it('should add listeners fast enough (within 50%)', function () {
 		this.timeout(3000)
 		this.slow(25000)
 		var j, n
@@ -58,9 +58,9 @@ describe('performance', function () {
 		function node() {
 			n.on('foo', noop).on('foo', noop).on('foo', noop)
 		}
-		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.25)
+		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
-	it('should add/remove once fast enough (within 25%)', function () {
+	it('should add/remove once fast enough (within 50%)', function () {
 		this.timeout(3000)
 		this.slow(25000)
 		var j, n
@@ -78,9 +78,9 @@ describe('performance', function () {
 			n.once('foo', noop).once('foo', noop).once('foo', noop)
 			n.emit('foo')
 		}
-		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.25)
+		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
-	it('should emit single listeners fast enough (within 25%)', function () {
+	it('should emit single listeners fast enough (within 50%)', function () {
 		this.timeout(3000)
 		this.slow(25000)
 		var j, n
@@ -100,9 +100,9 @@ describe('performance', function () {
 			n.emit('foo', 1)
 			n.emit('foo', 1, 'str', null, {})
 		}
-		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.25)
+		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
-	it('should emit multiple listeners fast enough (within 25%)', function () {
+	it('should emit multiple listeners fast enough (within 50%)', function () {
 		this.timeout(3000)
 		this.slow(25000)
 		var j, n
@@ -122,7 +122,7 @@ describe('performance', function () {
 			n.emit('foo', 1)
 			n.emit('foo', 1, 'str', null, {})
 		}
-		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.25)
+		fastEnough(ns(jelly, setupJ), ns(node, setupN), 0.50)
 	})
 	it('should removeAllListeners fast enough (within 50%)', function () {
 		this.timeout(3000)
