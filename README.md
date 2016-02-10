@@ -1,6 +1,11 @@
 # jellyemitter
 A generic event emitter that doesn't totally suck.
 
+```
+var JellyEmitter = require('jellyemitter')
+var emitter = new JellyEmitter()
+```
+
 ## How is this different from the Node.js EventEmitter?
 
 - All events are treated equally (`error`, `newListener`, and `removeListener` are not special)
@@ -8,9 +13,13 @@ A generic event emitter that doesn't totally suck.
 - No `maxListeners` (annoying and useless)
 - Only 744 bytes (minified and gzipped)
 
-Also, there's no `removeAllListeners()`.
+#### Also, there's no removeAllListeners()
 
 Okay I lied. You **can** do `_removeAllListeners([eventName])` (underscored), but you should **only** do that if you are the creator of the event emitter (**not** the consumer), and only if you **really** understand the consequences and have planned accordingly. I underscored this method because API consumers should not be tempted to use it.
+
+#### Inheritance
+
+When you inherit from `JellyEmitter`, you don't have to call the `JellyEmitter` constructor. Inheriting the prototype is enough.
 
 ## One cool thing
 
