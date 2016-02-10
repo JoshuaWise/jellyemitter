@@ -17,7 +17,7 @@ var emitter = new JellyEmitter()
 
 ##### There's no removeAllListeners()
 
-Okay I lied. You **can** do `_removeAllListeners([eventName])` (underscored), but you should **only** do that if you are the creator of the event emitter (**not** the consumer), and only if you **really** understand the consequences and have planned accordingly. I underscored this method because API consumers should not be tempted to use it.
+Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but you should **only** do that if you are the creator of the event emitter (**not** the consumer), and only if you **really** understand the consequences and have planned accordingly. I underscored this method because API consumers should not be tempted to use it.
 
 ##### Inheritance
 
