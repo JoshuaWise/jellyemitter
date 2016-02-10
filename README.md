@@ -29,6 +29,14 @@ Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but 
 
 When you inherit from `JellyEmitter`, you don't have to call the `JellyEmitter` constructor. Inheriting the prototype is enough.
 
+## Browser Support
+
+- Chrome 5+
+- Firefox 4+
+- Safari 5+
+- Opera 11.6+
+- Internet Explorer 9+
+
 ## Super-Secret Trick (for API developers)
 
 One cool thing you can do with `JellyEmitter`, but **not** [`EventEmitter`](https://nodejs.org/api/events.html#events_class_eventemitter), is the ability to wrap your event listeners in closures, but still allow the listener to be removed with the inner (unwrapped) function.
