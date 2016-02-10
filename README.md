@@ -1,16 +1,11 @@
 # jellyemitter
 An event emitter that's completely generic, and doesn't suck.
 
-## How is this event emitter different from the standard Node.js EventEmitter?
+## How is this different from the Node.js EventEmitter?
 
-- `error` is not a special event.
-- `newListener` and `removeListener` are not special events.
-- There are no special events.
-- Fuck special events.
-- All events are treated equally.
-- Special events have no place here.
-- No intrusive inspection (`listenerCount()`, `listeners()`).
-- No `maxListeners` useless garbage.
+- `error`, `newListener`, and `removeListener` are not special events
+- No intrusive inspection  with `listenerCount()` or `listeners()`
+- No `maxListeners` useless garbage
 - Only 744 bytes (minified and gzipped)
 
 Also, there's no `removeAllListeners()`.
