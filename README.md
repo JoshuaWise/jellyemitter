@@ -14,7 +14,7 @@ emitter.emit('foo') // => "foo!"
 - All events are treated equally ("error", "newListener", and "removeListener" are not special)
 - No intrusive inspection  with listenerCount() or listeners()
 - No max listeners (annoying and useless)
-- Only 740 bytes (minified and gzipped)
+- Only 760 bytes (minified and gzipped)
 - `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like an actual event (unlike literally every other event emitter in existence)
 
 Other than that, it's basically the same. You get `emit`, `on`, `once`, `addListener`, and `removeListener`.
@@ -28,6 +28,10 @@ Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but 
 ##### Inheritance
 
 When you inherit from `JellyEmitter`, you don't have to call the `JellyEmitter` constructor. Inheriting the prototype is enough.
+
+##### Performance
+
+`JellyEmitter` is faster than [`EventEmitter`](https://nodejs.org/api/events.html#events_class_eventemitter) in almost every respect, and uses slightly less memory.
 
 ## Browser Support
 

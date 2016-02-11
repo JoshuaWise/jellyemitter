@@ -64,7 +64,7 @@ JellyEmitter.prototype = {
 			} else if (list) {
 				for (var i=0, len=list.length; i<len; i++) {
 					if (list[i].originalListener ? list[i].originalListener === listener : list[i] === listener) {
-						len === 2 ? (events[eventName] = list[+!i]) : list.splice(i, 1)
+						len === 2 ? (events[eventName] = list[i ? 0 : 1]) : list.splice(i, 1)
 						break
 					}
 				}
@@ -91,7 +91,7 @@ function ar0(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self)
 	} else {
-		var listeners = handler.slice()
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self)
 		}
@@ -102,7 +102,7 @@ function ar1(self, handler, a) {
 	if (typeof handler === 'function') {
 		handler.call(self, a)
 	} else {
-		var listeners = handler.slice()
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, a)
 		}
@@ -113,7 +113,7 @@ function ar2(self, handler, a, b) {
 	if (typeof handler === 'function') {
 		handler.call(self, a, b)
 	} else {
-		var listeners = handler.slice()
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, a, b)
 		}
@@ -124,7 +124,7 @@ function ar3(self, handler, a, b, c) {
 	if (typeof handler === 'function') {
 		handler.call(self, a, b, c)
 	} else {
-		var listeners = handler.slice()
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, a, b, c)
 		}
@@ -135,9 +135,16 @@ function arX(self, handler, args) {
 	if (typeof handler === 'function') {
 		handler.apply(self, args)
 	} else {
-		var listeners = handler.slice()
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].apply(self, args)
 		}
 	}
+}
+
+function cp(arr) {
+	var len = arr.length
+	var ret = new Array(len)
+	for (var i=0; i<len; i++) {ret[i] = arr[i]}
+	return ret
 }

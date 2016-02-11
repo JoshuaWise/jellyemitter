@@ -166,4 +166,72 @@ describe('JellyEmitter', function () {
 		arr[100] = 'baz'
 		foo.emit.apply(foo, arr)
 	})
+	it('should treat no arg emits normally', function () {
+		var foo = new JellyEmitter
+		var emitted = false
+		foo.on(undefined, function () {
+			emitted = true
+		})
+		foo.emit()
+		expect(emitted).to.be.true
+	})
+	it('should treat undefined events normally', function () {
+		var foo = new JellyEmitter
+		var emitted = false
+		foo.on(undefined, function (a, b) {
+			emitted = true
+			expect(a).to.equal('bar')
+			expect(b).to.equal('baz')
+		})
+		foo.emit(undefined, 'bar', 'baz')
+		expect(emitted).to.be.true
+	})
+	it('should treat all values as object keys', function () {
+		var foo = new JellyEmitter
+		var emitted = 0
+		var emittedBad = 0
+		foo.on('NaN', function (a) {
+			emitted++
+			expect(a).to.equal('bar')
+		})
+		foo.emit(NaN, 'bar')
+		foo.on('-Infinity', function (a) {
+			emitted++
+			expect(a).to.equal('baz')
+		})
+		foo.emit(-Infinity, 'baz')
+		foo.on(null, function (a) {
+			emitted++
+			expect(a).to.equal('bax')
+		})
+		foo.emit('null', 'bax')
+		foo.on('[object Object]', function (a) {
+			emitted++
+			expect(a).to.equal('baq')
+		})
+		foo.emit({}, 'baq')
+		if (typeof Symbol === 'function') {
+			var supportsSymbols = true
+			var sym = Symbol('sym')
+			foo.on(sym, function (a) {
+				emitted++
+				expect(a).to.equal('quax')
+			})
+			foo.emit(sym, 'quax')
+			
+			var sym2 = Symbol()
+			foo.on(sym2, function (a) {
+				emittedBad++
+			})
+			foo.emit(String(sym2), 'quax')
+			
+			var foo2 = new JellyEmitter
+			foo2.on(String(sym2), function (a) {
+				emittedBad++
+			})
+			foo2.emit(sym2, 'quax')
+		}
+		expect(emitted).to.equal(4 + supportsSymbols)
+		expect(emittedBad).to.equal(0)
+	})
 })
