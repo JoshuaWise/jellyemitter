@@ -231,7 +231,7 @@ describe('JellyEmitter', function () {
 			})
 			foo2.emit(sym2, 'quax')
 		}
-		expect(emitted).to.equal(4 + supportsSymbols)
+		expect(emitted).to.equal(4 + !!supportsSymbols)
 		expect(emittedBad).to.equal(0)
 	})
 })
