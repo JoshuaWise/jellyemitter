@@ -101,6 +101,20 @@ describe('JellyEmitter', function () {
 		emitter.emit('a')
 		expect(a).to.equal(1)
 	})
+	it('should emit both four times', function () {
+		emitter.once('a', incA)
+		emitter.on('a', incA)
+		emitter.on('b', incB)
+		emitter.once('b', incB)
+		emitter.emit('a')
+		emitter.emit('a')
+		emitter.emit('a')
+		emitter.emit('b')
+		emitter.emit('b')
+		emitter.emit('b')
+		expect(a).to.equal(4)
+		expect(b).to.equal(4)
+	})
 	it('should be a proper map', function () {
 		var foo = new JellyEmitter
 		foo.bar = true

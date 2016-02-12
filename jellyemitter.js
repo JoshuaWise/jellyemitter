@@ -41,10 +41,10 @@ JellyEmitter.prototype = {
 		}
 		var fired = false
 		function w() {
-			this.removeListener(eventName, w.originalListener)
+			listener.apply(this, arguments)
 			if (!fired) {
+				this.removeListener(eventName, w.originalListener)
 				fired = true
-				listener.apply(this, arguments)
 			}
 		}
 		w.originalListener = listener.originalListener || listener
