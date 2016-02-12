@@ -13,7 +13,7 @@ emitter.emit('foo') // => "foo!"
 
 - All events are treated equally ("error", "newListener", and "removeListener" are not special)
 - No intrusive inspection  with listenerCount() or listeners()
-- No max listeners (annoying and useless)
+- No max listeners warning (annoying and useless)
 - Only 724 bytes (minified and gzipped)
 - `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like an actual event (unlike literally every other event emitter in existence)
 
@@ -23,7 +23,11 @@ Other than that, it's basically the same. You get `emit`, `on`, `once`, `addList
 
 ##### There's no removeAllListeners()
 
-Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but you should **only** do that if you are the creator of the event emitter (**not** the consumer), and only if you **really** understand the consequences and have planned accordingly. I underscored this method because API consumers should not be tempted to use it.
+Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but you should **only** do that under one of two conditions:
+- You are an API developer and you **really** know what you're doing
+- You are an API consumer and you **really** know what you're doing, and you **know** your code is the only code to touch that event emitter
+
+I underscored this method because of how dangerous it is. If you don't understand why it's dangerous, you probably shouldn't be using it.
 
 ##### Inheritance
 
