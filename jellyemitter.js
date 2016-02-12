@@ -39,6 +39,12 @@ JellyEmitter.prototype = {
 		if (typeof listener !== 'function') {
 			throw new TypeError('Event listener must be a function, not ' + (listener === null ? null : typeof listener) + '.')
 		}
+		// This current implementation could cause event order to be changed in edge cases:
+		// emitter.on('foo', bar)
+		// emitter.on('foo', quux)
+		// emitter.once('foo', bar)
+		// emitter.emit('foo') // Event order: bar, quux, bar
+		// emitter.emit('foo') // Event order: quux, bar
 		var fired = false
 		function w() {
 			listener.apply(this, arguments)
