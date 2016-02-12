@@ -72,4 +72,4 @@ This is useful for API developers who wish to give custom functionality to some 
 
 When you use the `.originalListener` property on a wrapped function, `JellyEmitter` can no longer disinguish between the wrapped function and the original. This means, if you add both the original **and** the wrapped listener to the `JellyEmitter`, a call to `.removeListener(eventName, original)` will just remove the first version that was added, regardless of which version you intended to remove. Therefore, if you add a wrapped listener, you should **never** allow the unwrapped version to be added (to the same event). You should also **never** add the same function wrapped in two different ways (to the same event).
 
-In short, when you use the `.originalListener` property, you are saying "this outer function is *taking the place* of the original, and no other listener is doing such unless it is a clone of this outer function".
+In short, when you use the `.originalListener` property, you are saying "this outer function is *totally representing* the original, and no other listener will do such (not even the original) unless it is a clone of this outer function".
