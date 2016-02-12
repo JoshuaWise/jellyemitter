@@ -1,4 +1,5 @@
 var expect = require('chai').expect
+var clc = require('cli-color')
 var JellyEmitter = require('../.')
 var EventEmitter = require('events')
 var isRemoteTest = process.env.CI || typeof zuul_msg_bus !== 'undefined'
@@ -10,7 +11,7 @@ isRemoteTest || describe('performance (allocation)', function () {
 		return function (fn, setup) {
 			setup = setup || noop
 			var times = []
-			var endTime = now() + 2000
+			var endTime = now() + 500
 			do {
 				setup()
 				var t1 = hrtime()
@@ -22,19 +23,28 @@ isRemoteTest || describe('performance (allocation)', function () {
 		}
 	}(process.hrtime, Date.now, Math.round))
 	function noop() {}
-	function fastEnough(a, b, forgiveness) {
-		if (a > b) {
-			expect(a).to.be.closeTo(b, b * forgiveness)
-		}
+	function repeat(str, n) {
+		var ret = ''
+		for (var i=0; i<n; i++) {ret += str}
+		return ret
 	}
-	function faster(a, b) {
-		expect(a).to.be.at.most(b)
+	function logPerf(a, b) {
+		var diff = a - b
+		var variation = diff / b
+		var bar = repeat('\u2013', 63) + '\u21b5 '
+		var nanoseconds = (diff < 0 ? '' : '+') + diff
+		var percent = (variation < 0 ? '' : '+') + Math.round(variation * 100) + '%'
+		var tab = repeat(' ', 80 - bar.length - nanoseconds.length - percent.length)
+		var color = diff < 0 ? clc.green : (diff < 10 || variation < 0.1) ? clc.white : clc.red
+		console.log(bar + color(percent + tab + nanoseconds))
 	}
+	
 	JellyEmitter.prototype.removeAllListeners = JellyEmitter.prototype._removeAllListeners
-	it('should wait for node stabilization before performing tests', function (done) {
+	it('waiting for node stabilization before performing tests...', function (done) {
+		this.timeout(400000); this.slow(400000)
 		setTimeout(done, 2000)
 	})
-	it('should be created faster', function () {
+	it('new instance', function () {
 		this.timeout(400000); this.slow(400000)
 		function jelly() {
 			var foo = new JellyEmitter
@@ -42,9 +52,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function node() {
 			var foo = new EventEmitter
 		}
-		faster(ns(jelly), ns(node))
+		logPerf(ns(jelly), ns(node))
 	})
-	it('should add first listener within 50%', function () {
+	it('adding first listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -56,9 +66,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		fastEnough(ns(test, jelly), ns(test, node), 0.5)
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should add second listener faster', function () {
+	it('adding second listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -70,9 +80,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should add third listener faster', function () {
+	it('adding third listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -84,9 +94,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should add first listener of event faster', function () {
+	it('adding first listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -98,9 +108,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should add second listener of event faster', function () {
+	it('adding second listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -112,9 +122,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should add third listener of event faster', function () {
+	it('adding third listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -126,9 +136,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.on('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove first listener within 350%', function () {
+	it('removing only listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -140,9 +150,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		fastEnough(ns(test, jelly), ns(test, node), 3.5)
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove second listener faster', function () {
+	it('removing second listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -154,9 +164,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove third listener with 350%', function () {
+	it('removing third listener', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -168,9 +178,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		fastEnough(ns(test, jelly), ns(test, node), 3.5)
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove first listener of event faster', function () {
+	it('removing only listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -182,9 +192,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove second listener of event faster', function () {
+	it('removing second listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -196,9 +206,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove third listener within 350%', function () {
+	it('removing third listener of second event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -210,9 +220,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeListener('foo', noop)
 		}
-		fastEnough(ns(test, jelly), ns(test, node), 3.5)
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove all listeners (none) faster', function () {
+	it('removing all listeners (none)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -224,23 +234,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeAllListeners()
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove all listeners (one) faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.removeAllListeners()
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should remove all listeners (many) faster', function () {
+	it('removing all listeners (many)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -252,9 +248,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeAllListeners()
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove all listeners (one) of only event within 350%', function () {
+	it('removing the only event name', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -266,23 +262,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeAllListeners('foo')
 		}
-		fastEnough(ns(test, jelly), ns(test, node), 3.5)
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove all listeners (many) of only event within 350%', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop).on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop).on('foo', noop)
-		}
-		function test() {
-			emitter.removeAllListeners('foo')
-		}
-		fastEnough(ns(test, jelly), ns(test, node), 3.5)
-	})
-	it('should remove all listeners (one) of event faster', function () {
+	it('removing an event name, of multiple', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -294,51 +276,9 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.removeAllListeners('foo')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should remove all listeners (many) of event faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('bar', noop).on('foo', noop).on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('bar', noop).on('foo', noop).on('foo', noop)
-		}
-		function test() {
-			emitter.removeAllListeners('foo')
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should allocate first once() within 50%', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter()
-		}
-		function node() {
-			emitter = new EventEmitter()
-		}
-		function test() {
-			emitter.once('foo', noop)
-		}
-		fastEnough(ns(test, jelly), ns(test, node), 0.5)
-	})
-	it('should allocate second once() faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.once('foo', noop)
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should allocate third once() faster', function () {
+	it('adding a once() event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -350,48 +290,20 @@ isRemoteTest || describe('performance (allocation)', function () {
 		function test() {
 			emitter.once('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should allocate first once() of event faster', function () {
+	it('removing a once() event', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
-			emitter = new JellyEmitter().on('bar', noop)
+			emitter = new JellyEmitter().on('bar', noop).once('foo', noop)
 		}
 		function node() {
-			emitter = new EventEmitter().on('bar', noop)
+			emitter = new EventEmitter().on('bar', noop).once('foo', noop)
 		}
 		function test() {
-			emitter.once('foo', noop)
+			emitter.removeListener('foo', noop)
 		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should allocate second once() of event faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('bar', noop).on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('bar', noop).on('foo', noop)
-		}
-		function test() {
-			emitter.once('foo', noop)
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should allocate third once() of event faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('bar', noop).on('foo', noop).on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('bar', noop).on('foo', noop).on('foo', noop)
-		}
-		function test() {
-			emitter.once('foo', noop)
-		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
 })

@@ -1,4 +1,5 @@
 var expect = require('chai').expect
+var clc = require('cli-color')
 var JellyEmitter = require('../.')
 var EventEmitter = require('events')
 var isRemoteTest = process.env.CI || typeof zuul_msg_bus !== 'undefined'
@@ -10,7 +11,7 @@ isRemoteTest || describe('performance (execution)', function () {
 		return function (fn, setup) {
 			setup = setup || noop
 			var times = []
-			var endTime = now() + 2000
+			var endTime = now() + 500
 			do {
 				setup()
 				var t1 = hrtime()
@@ -22,18 +23,27 @@ isRemoteTest || describe('performance (execution)', function () {
 		}
 	}(process.hrtime, Date.now, Math.round))
 	function noop() {}
-	function fastEnough(a, b, forgiveness) {
-		if (a > b) {
-			expect(a).to.be.closeTo(b, b * forgiveness)
-		}
+	function repeat(str, n) {
+		var ret = ''
+		for (var i=0; i<n; i++) {ret += str}
+		return ret
 	}
-	function faster(a, b) {
-		expect(a).to.be.at.most(b)
+	function logPerf(a, b) {
+		var diff = a - b
+		var variation = diff / b
+		var bar = repeat('\u2013', 63) + '\u21b5 '
+		var nanoseconds = (diff < 0 ? '' : '+') + diff
+		var percent = (variation < 0 ? '' : '+') + Math.round(variation * 100) + '%'
+		var tab = repeat(' ', 80 - bar.length - nanoseconds.length - percent.length)
+		var color = diff < 0 ? clc.green : (diff < 10 || variation < 0.1) ? clc.white : clc.red
+		console.log(bar + color(percent + tab + nanoseconds))
 	}
-	it('should wait for node stabilization before performing tests', function (done) {
+	
+	it('waiting for node stabilization before performing tests...', function (done) {
+		this.timeout(400000); this.slow(400000)
 		setTimeout(done, 2000)
 	})
-	it('should emit single event (no args) faster', function () {
+	it('emitting single event (no args)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -45,9 +55,65 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should emit double event (no args) faster', function () {
+	it('emitting single event (1 arg)', function () {
+		this.timeout(400000); this.slow(400000)
+		var emitter
+		function jelly() {
+			emitter = new JellyEmitter().on('foo', noop)
+		}
+		function node() {
+			emitter = new EventEmitter().on('foo', noop)
+		}
+		function test() {
+			emitter.emit('foo', 'bar')
+		}
+		logPerf(ns(test, jelly), ns(test, node))
+	})
+	it('emitting single event (2 args)', function () {
+		this.timeout(400000); this.slow(400000)
+		var emitter
+		function jelly() {
+			emitter = new JellyEmitter().on('foo', noop)
+		}
+		function node() {
+			emitter = new EventEmitter().on('foo', noop)
+		}
+		function test() {
+			emitter.emit('foo', 'bar', 'baz')
+		}
+		logPerf(ns(test, jelly), ns(test, node))
+	})
+	it('emitting single event (3 args)', function () {
+		this.timeout(400000); this.slow(400000)
+		var emitter
+		function jelly() {
+			emitter = new JellyEmitter().on('foo', noop)
+		}
+		function node() {
+			emitter = new EventEmitter().on('foo', noop)
+		}
+		function test() {
+			emitter.emit('foo', 'bar', 'baz', 'quax')
+		}
+		logPerf(ns(test, jelly), ns(test, node))
+	})
+	it('emitting single event (10 args)', function () {
+		this.timeout(400000); this.slow(400000)
+		var emitter
+		function jelly() {
+			emitter = new JellyEmitter().on('foo', noop)
+		}
+		function node() {
+			emitter = new EventEmitter().on('foo', noop)
+		}
+		function test() {
+			emitter.emit('foo', 'bar', 'baz', 'quax', 4, 5, 6, 7, 8, 9, 10)
+		}
+		logPerf(ns(test, jelly), ns(test, node))
+	})
+	it('emitting double event (no args)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -59,23 +125,9 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should emit single event (1 arg) faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.emit('foo', 'bar')
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should emit double event (1 arg) faster', function () {
+	it('emitting double event (1 arg)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -87,23 +139,9 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo', 'bar')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should emit single event (2 args) faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.emit('foo', 'bar', 'baz')
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should emit double event (2 args) faster', function () {
+	it('emitting double event (2 args)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -115,23 +153,9 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo', 'bar', 'baz')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should emit single event (3 args) faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.emit('foo', 'bar', 'baz', 'quax')
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should emit double event (3 args) faster', function () {
+	it('emitting double event (3 args)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -143,23 +167,9 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo', 'bar', 'baz', 'quax')
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
-	it('should emit single event (10 args) faster', function () {
-		this.timeout(400000); this.slow(400000)
-		var emitter
-		function jelly() {
-			emitter = new JellyEmitter().on('foo', noop)
-		}
-		function node() {
-			emitter = new EventEmitter().on('foo', noop)
-		}
-		function test() {
-			emitter.emit('foo', 'bar', 'baz', 'quax', 4, 5, 6, 7, 8, 9, 10)
-		}
-		faster(ns(test, jelly), ns(test, node))
-	})
-	it('should emit double event (10 args) faster', function () {
+	it('emitting double event (10 args)', function () {
 		this.timeout(400000); this.slow(400000)
 		var emitter
 		function jelly() {
@@ -171,6 +181,6 @@ isRemoteTest || describe('performance (execution)', function () {
 		function test() {
 			emitter.emit('foo', 'bar', 'baz', 'quax', 4, 5, 6, 7, 8, 9, 10)
 		}
-		faster(ns(test, jelly), ns(test, node))
+		logPerf(ns(test, jelly), ns(test, node))
 	})
 })

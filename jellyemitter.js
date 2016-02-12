@@ -7,14 +7,14 @@ JellyEmitter.prototype = {
 		if (list) {
 			var argLen = arguments.length
 			if (argLen < 5) {
-				argLen <= 1 ? ar0(this, list) :
-				argLen == 2 ? ar1(this, list, arguments[1]) :
-				argLen == 3 ? ar2(this, list, arguments[1], arguments[2]) :
-				              ar3(this, list, arguments[1], arguments[2], arguments[3])
+				argLen <= 1 ? a0(this, list) :
+				argLen == 2 ? a1(this, list, arguments[1]) :
+				argLen == 3 ? a2(this, list, arguments[1], arguments[2]) :
+				              a3(this, list, arguments[1], arguments[2], arguments[3])
 			} else {
 				var args = new Array(argLen - 1)
 				for (var i=1; i<argLen; i++) {args[i - 1] = arguments[i]}
-				arX(this, list, args)
+				aX(this, list, args)
 			}
 			return true
 		}
@@ -63,7 +63,8 @@ JellyEmitter.prototype = {
 				}
 			} else if (list) {
 				for (var i=0, len=list.length; i<len; i++) {
-					if (list[i].originalListener ? list[i].originalListener === listener : list[i] === listener) {
+					var item = list[i]
+					if (item.originalListener ? item.originalListener === listener : item === listener) {
 						len === 2 ? (events[eventName] = list[i ? 0 : 1]) : list.splice(i, 1)
 						break
 					}
@@ -87,7 +88,7 @@ JellyEmitter.prototype = {
 JellyEmitter.prototype.addListener = JellyEmitter.prototype.on
 module.exports = JellyEmitter
 
-function ar0(self, handler) {
+function a0(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self)
 	} else {
@@ -98,46 +99,46 @@ function ar0(self, handler) {
 	}
 }
 
-function ar1(self, handler, a) {
+function a1(self, handler) {
 	if (typeof handler === 'function') {
-		handler.call(self, a)
+		handler.call(self, arguments[2])
 	} else {
 		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
-			listeners[i].call(self, a)
+			listeners[i].call(self, arguments[2])
 		}
 	}
 }
 
-function ar2(self, handler, a, b) {
+function a2(self, handler) {
 	if (typeof handler === 'function') {
-		handler.call(self, a, b)
+		handler.call(self, arguments[2], arguments[3])
 	} else {
 		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
-			listeners[i].call(self, a, b)
+			listeners[i].call(self, arguments[2], arguments[3])
 		}
 	}
 }
 
-function ar3(self, handler, a, b, c) {
+function a3(self, handler) {
 	if (typeof handler === 'function') {
-		handler.call(self, a, b, c)
+		handler.call(self, arguments[2], arguments[3], arguments[4])
 	} else {
 		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
-			listeners[i].call(self, a, b, c)
+			listeners[i].call(self, arguments[2], arguments[3], arguments[4])
 		}
 	}
 }
 
-function arX(self, handler, args) {
+function aX(self, handler) {
 	if (typeof handler === 'function') {
-		handler.apply(self, args)
+		handler.apply(self, arguments[2])
 	} else {
 		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
-			listeners[i].apply(self, args)
+			listeners[i].apply(self, arguments[2])
 		}
 	}
 }
