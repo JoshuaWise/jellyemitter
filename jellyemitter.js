@@ -47,11 +47,11 @@ JellyEmitter.prototype = {
 		// emitter.emit('foo') // Event order: quux, bar
 		var fired = false
 		function w() {
-			listener.apply(this, arguments)
 			if (!fired) {
 				this.removeListener(eventName, w.originalListener)
 				fired = true
 			}
+			listener.apply(this, arguments)
 		}
 		w.originalListener = listener.originalListener || listener
 		return this.on(eventName, w)
