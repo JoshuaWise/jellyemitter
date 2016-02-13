@@ -115,6 +115,17 @@ describe('JellyEmitter', function () {
 		expect(a).to.equal(4)
 		expect(b).to.equal(4)
 	})
+	it('should emit in the correct order', function () {
+		var str = ''
+		function a() {str += 'a'}
+		function b() {str += 'b'}
+		emitter.on('foo', a)
+		emitter.on('foo', b)
+		emitter.once('foo', a)
+		emitter.emit('foo')
+		emitter.emit('foo')
+		expect(str).to.equal('abaab')
+	})
 	it('should be a proper map', function () {
 		var foo = new JellyEmitter
 		foo.bar = true

@@ -1,4 +1,5 @@
 'use strict'
+var W = {} // Private flag
 
 function JellyEmitter() {}
 JellyEmitter.prototype = {
@@ -39,21 +40,16 @@ JellyEmitter.prototype = {
 		if (typeof listener !== 'function') {
 			throw new TypeError('Event listener must be a function, not ' + (listener === null ? null : typeof listener) + '.')
 		}
-		// This current implementation could cause event order to be changed in edge cases:
-		// emitter.on('foo', bar)
-		// emitter.on('foo', quux)
-		// emitter.once('foo', bar)
-		// emitter.emit('foo') // Event order: bar, quux, bar
-		// emitter.emit('foo') // Event order: quux, bar
-		var fired = false
+		var notFired = 1
 		function w() {
-			if (!fired) {
-				this.removeListener(eventName, w.originalListener)
-				fired = true
+			if (notFired) {
+				notFired = 0
+				this.removeListener(eventName, w)
+				listener.apply(this, arguments)
 			}
-			listener.apply(this, arguments)
 		}
 		w.originalListener = listener.originalListener || listener
+		w.W = W
 		return this.on(eventName, w)
 	},
 	removeListener: function (eventName, listener) {
@@ -63,6 +59,9 @@ JellyEmitter.prototype = {
 		var events = this._events
 		if (events) {
 			var list = events[eventName]
+			if (listener.W === W) {
+				listener.originalListener = undefined
+			}
 			if (typeof list === 'function') {
 				if (list.originalListener ? list.originalListener === listener : list === listener) {
 					delete events[eventName]
