@@ -244,17 +244,25 @@ describe('JellyEmitter', function () {
 			})
 			foo.emit(sym, 'quax')
 			
-			var sym2 = Symbol()
-			foo.on(sym2, function (a) {
-				emittedBad++
-			})
-			foo.emit(String(sym2), 'quax')
+			try {
+				String(sym);
+			} catch (e) {
+				var ignoreSymbolStringConversions = true;
+			}
 			
-			var foo2 = new JellyEmitter
-			foo2.on(String(sym2), function (a) {
-				emittedBad++
-			})
-			foo2.emit(sym2, 'quax')
+			if (!ignoreSymbolStringConversions) {
+				var sym2 = Symbol()
+				foo.on(sym2, function (a) {
+					emittedBad++
+				})
+				foo.emit(String(sym2), 'quax')
+				
+				var foo2 = new JellyEmitter
+				foo2.on(String(sym2), function (a) {
+					emittedBad++
+				})
+				foo2.emit(sym2, 'quax')
+			}
 		}
 		expect(emitted).to.equal(4 + !!supportsSymbols)
 		expect(emittedBad).to.equal(0)
