@@ -1,5 +1,5 @@
 'use strict'
-var W = {} // Private flag
+var _W = {} // Private flag; a future version should use Symbols here.
 
 function JellyEmitter() {}
 JellyEmitter.prototype.emit = function (eventName) {
@@ -7,14 +7,14 @@ JellyEmitter.prototype.emit = function (eventName) {
 	if (list) {
 		var argLen = arguments.length
 		if (argLen < 5) {
-			argLen <= 1 ? a0(this, list) :
-			argLen == 2 ? a1(this, list, arguments[1]) :
-			argLen == 3 ? a2(this, list, arguments[1], arguments[2]) :
-			              a3(this, list, arguments[1], arguments[2], arguments[3])
+			argLen <= 1 ? arg0(this, list) :
+			argLen == 2 ? arg1(this, list, arguments[1]) :
+			argLen == 3 ? arg2(this, list, arguments[1], arguments[2]) :
+			              arg3(this, list, arguments[1], arguments[2], arguments[3])
 		} else {
 			var args = new Array(argLen - 1)
 			for (var i=1; i<argLen; i++) {args[i - 1] = arguments[i]}
-			aX(this, list, args)
+			argX(this, list, args)
 		}
 		return true
 	}
@@ -25,7 +25,7 @@ JellyEmitter.prototype.on = function (eventName, listener) {
 	if (typeof listener !== 'function') {
 		throw TypeError('Event listener must be a function, not ' + (listener === null ? null : typeof listener) + '.')
 	}
-	var events = this._events || (this._events = Object.create(null))
+	var events = this._events || (this._events = new HashTable)
 	var list = events[eventName]
 	if (!list) {
 		events[eventName] = listener
@@ -49,7 +49,7 @@ JellyEmitter.prototype.once = function (eventName, listener) {
 		}
 	}
 	w.originalListener = listener.originalListener || listener
-	w.W = W
+	w._W = _W
 	return this.on(eventName, w)
 }
 JellyEmitter.prototype.removeListener = function (eventName, listener) {
@@ -59,7 +59,7 @@ JellyEmitter.prototype.removeListener = function (eventName, listener) {
 	var events = this._events
 	if (events) {
 		var list = events[eventName]
-		if (listener.W === W) {
+		if (listener._W === _W) {
 			listener.originalListener = undefined
 		}
 		if (typeof list === 'function') {
@@ -70,7 +70,7 @@ JellyEmitter.prototype.removeListener = function (eventName, listener) {
 			for (var i=0, len=list.length; i<len; i++) {
 				var item = list[i]
 				if (item.originalListener ? item.originalListener === listener : item === listener) {
-					len === 2 ? (events[eventName] = list[i ? 0 : 1]) : list.splice(i, 1)
+					len === 2 ? (events[eventName] = list[i ? 0 : 1]) : rm(list, i)
 					break
 				}
 			}
@@ -91,64 +91,77 @@ JellyEmitter.prototype._removeAllListeners = function (eventName) {
 }
 module.exports = JellyEmitter
 
-function a0(self, handler) {
+function arg0(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self)
 	} else {
-		var listeners = c(handler)
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self)
 		}
 	}
 }
 
-function a1(self, handler) {
+function arg1(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self, arguments[2])
 	} else {
-		var listeners = c(handler)
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, arguments[2])
 		}
 	}
 }
 
-function a2(self, handler) {
+function arg2(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self, arguments[2], arguments[3])
 	} else {
-		var listeners = c(handler)
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, arguments[2], arguments[3])
 		}
 	}
 }
 
-function a3(self, handler) {
+function arg3(self, handler) {
 	if (typeof handler === 'function') {
 		handler.call(self, arguments[2], arguments[3], arguments[4])
 	} else {
-		var listeners = c(handler)
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].call(self, arguments[2], arguments[3], arguments[4])
 		}
 	}
 }
 
-function aX(self, handler) {
+function argX(self, handler) {
 	if (typeof handler === 'function') {
 		handler.apply(self, arguments[2])
 	} else {
-		var listeners = c(handler)
+		var listeners = cp(handler)
 		for (var i=0, len=listeners.length; i<len; i++) {
 			listeners[i].apply(self, arguments[2])
 		}
 	}
 }
 
-function c(arr) {
+// Faster than invoking arr.slice().
+function cp(arr) {
 	var len = arr.length
 	var ret = new Array(len)
 	for (var i=0; i<len; i++) {ret[i] = arr[i]}
 	return ret
 }
+
+// Faster than invoking arr.splice(index, 1).
+function rm(arr, index) {
+	var len = arr.length
+	for (var i=index+1; i<len; i++) {arr[i - 1] = arr[i]}
+	arr.pop()
+}
+
+// Instantiating this is faster than just invoking Object.create(null).
+function HashTable() {}
+HashTable.prototype = Object.create(null)
+

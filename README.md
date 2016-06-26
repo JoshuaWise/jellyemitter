@@ -14,7 +14,7 @@ emitter.emit('foo') // => "foo!"
 - All events are treated equally ("error", "newListener", and "removeListener" are not special)
 - No intrusive inspection  with listenerCount() or listeners()
 - No max listeners warning (annoying and useless)
-- Only 744 bytes (minified and gzipped)
+- Only 704 bytes (minified and gzipped)
 - `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like an actual event (unlike literally every other event emitter in existence)
 
 Other than that, it's basically the same. You get `emit`, `on`, `once`, `addListener`, and `removeListener`.
