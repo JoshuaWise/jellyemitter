@@ -1,7 +1,15 @@
 # jellyemitter [![Build Status](https://img.shields.io/travis/JoshuaWise/jellyemitter.svg)](https://travis-ci.org/JoshuaWise/jellyemitter)
 A generic event emitter that doesn't totally suck.
 
+## Installation
+
+```bash
+npm install --save jellyemitter
 ```
+
+## Usage
+
+```js
 var JellyEmitter = require('jellyemitter')
 var emitter = new JellyEmitter
 
