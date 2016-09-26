@@ -28,7 +28,7 @@ Other than that, it's basically the same. You get `emit`, `on`, `once`, `addList
 
 ## Design details
 
-##### There's no removeAllListeners()
+#### There's no removeAllListeners()
 
 Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but you should **only** do that under one of two conditions:
 - You are an API developer and you **really** know what you're doing
@@ -36,11 +36,11 @@ Okay I lied. You *can* do `_removeAllListeners([eventName])` (underscored), but 
 
 I underscored this method because of how dangerous it is. If you don't understand why it's dangerous, you probably shouldn't be using it.
 
-##### Inheritance
+#### Inheritance
 
 When you inherit from `JellyEmitter`, you don't have to call the `JellyEmitter` constructor. Inheriting the prototype is enough.
 
-##### Performance
+#### Performance
 
 `JellyEmitter` takes advantage of smart V8 optimizations, just like [`EventEmitter`](https://nodejs.org/api/events.html#events_class_eventemitter). In most cases, you'll find it to have exactly the same performance, if not a little faster.
 
