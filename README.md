@@ -42,7 +42,7 @@ When you inherit from `JellyEmitter`, you don't have to call the `JellyEmitter` 
 
 #### Performance
 
-`JellyEmitter` takes advantage of smart V8 optimizations, just like [`EventEmitter`](https://nodejs.org/api/events.html#events_class_eventemitter). In most cases though, you'll find it even has slightly better performance.
+`JellyEmitter` takes advantage of smart V8 optimizations, just like [`EventEmitter`](https://nodejs.org/api/events.html#events_class_eventemitter). In most cases, it's even has slightly better performance compared to `EventEmitter`.
 
 ## Browser Support
 
