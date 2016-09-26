@@ -23,11 +23,10 @@ emitter.emit('foo') // => "foo!"
 - No intrusive inspection  with listenerCount() or listeners()
 - No max listeners warning (annoying and useless)
 - Only 704 bytes (minified and gzipped)
-- `emitter.emit('hasOwnProperty', 'foobar')` treats "hasOwnProperty" like an actual event (this was fixed in Node.js v6.0.0)
 
 Other than that, it's basically the same. You get `emit`, `on`, `once`, `addListener`, and `removeListener`.
 
-## Other differences
+## Design details
 
 ##### There's no removeAllListeners()
 
